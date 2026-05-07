@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="DoorPilot - Delivery location sharing with voice guidance">
-  <meta name="theme-color" content="#0A2647">
+  <meta name="theme-color" content="#00B14F">
   <title>DoorPilot - Find Your Delivery</title>
   
   <!-- Stylesheets -->
+  <!-- Google Font: Poppins for modern UI -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/animations.css">
   <link rel="stylesheet" href="/css/responsive.css">
@@ -22,6 +24,26 @@
 </head>
 <body>
   <div id="app">
+    <!-- App Header (sticky) -->
+    <header class="app-header">
+      <div class="header-inner container">
+        <div class="logo">
+          <img src="/assets/icon-192.png" alt="DoorPilot" class="header-logo"> 
+          <span class="brand">DoorPilot</span>
+        </div>
+
+        <div class="search-wrap">
+          <input id="global-search" class="search-input" type="search" placeholder="Search items, restaurants, or address" aria-label="Search">
+        </div>
+
+        <div class="header-actions">
+          <button id="location-btn" class="btn btn-secondary btn-icon" aria-label="Change location">📍</button>
+          <button id="cart-btn" class="btn btn-primary btn-icon" aria-label="Open cart">
+            🛒 <span class="cart-count" id="header-cart-count">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
     <!-- Loading Screen -->
     <div id="loading-screen" class="loading-screen">
       <div class="loader"></div>
@@ -54,6 +76,16 @@
         <div class="page-header">
           <h1>What can we deliver?</h1>
           <p>Select items you would like to order</p>
+        </div>
+
+        <!-- Category strip: horizontal scrollable pills -->
+        <div class="categories" id="categories">
+          <button class="category-pill">Groceries</button>
+          <button class="category-pill">Food</button>
+          <button class="category-pill">Medicines</button>
+          <button class="category-pill">Documents</button>
+          <button class="category-pill">Parcel</button>
+          <button class="category-pill">Essentials</button>
         </div>
 
         <div class="items-grid" id="items-grid">

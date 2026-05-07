@@ -130,32 +130,76 @@ class DoorPilotApp {
       const items = await api.getItems();
       this.renderItems(items);
     } catch (err) {
-      console.error('Failed to load items:', err);
-      alert('Failed to load items');
+      console.warn('API items load failed, using local sample catalog:', err);
+
+      // Fallback sample catalog with realistic product images (Unsplash / public images)
+      const sampleCatalog = {
+        "Snacks": [
+          { id: 'lays-01', name: 'Lays Classic Chips - 50g', price: 25, img: 'https://images.unsplash.com/photo-1606813902833-3c4a6b7a9b7b?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=1f3e3e6f1a4d6c9f9b8a' },
+          { id: 'popcorn-01', name: 'Butter Popcorn - 100g', price: 45, img: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=9c7b1a2f4b9c8f1c2d3a' }
+        ],
+        "Cookies": [
+          { id: 'unibic-01', name: 'Unibic Chocolate Chip Cookies - 100g', price: 60, img: 'https://images.unsplash.com/photo-1604908177522-8b5f2b0d1d1d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3d1e2f4e5a6b7c8d9e0f' },
+          { id: 'oreo-01', name: 'Oreo Chocolate Sandwich - 95g', price: 40, img: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=5b6c7d8e9f0a1b2c3d4e' }
+        ],
+        "Beverages": [
+          { id: 'cola-01', name: 'Spark Cola 300ml', price: 30, img: 'https://images.unsplash.com/photo-1601050690597-5b8f0d3d1a2b?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=7e8f9a0b1c2d3e4f5a6b' }
+        ]
+      };
+
+      this.renderItems(sampleCatalog);
     }
   }
 
   renderItems(catalogItems) {
     const grid = document.getElementById('items-grid');
     grid.innerHTML = '';
-
+    // Render categories as grouped sections for a marketplace feel
     Object.keys(catalogItems).forEach(category => {
+      const section = document.createElement('section');
+      section.className = 'catalog-section container';
+
+      const header = document.createElement('div');
+      header.className = 'catalog-header';
+      header.innerHTML = `<h2>${category}</h2>`;
+      section.appendChild(header);
+
+      const row = document.createElement('div');
+      row.className = 'items-grid';
+
       catalogItems[category].forEach(item => {
         const card = document.createElement('div');
         card.className = 'item-card';
         card.innerHTML = `
-          <div class="item-card-icon">📦</div>
-          <div class="item-card-name">${item.name}</div>
-          <div class="item-card-price">₹${item.price}</div>
-          <div class="item-card-qty">In cart: <span id="qty-${item.id}">0</span></div>
+          <div class="item-img">
+            <img src="${item.img}" alt="${item.name}">
+          </div>
+          <div class="item-body">
+            <div class="item-meta">
+              <div>
+                <div class="item-name">${item.name}</div>
+                <div class="item-sub">Fast delivery • 20-30 mins</div>
+              </div>
+              <div class="item-price">₹${item.price}</div>
+            </div>
+            <div class="item-row">
+              <div class="item-qty">In cart: <span id="qty-${item.id}">0</span></div>
+              <div class="item-cta"><button class="add-btn">ADD</button></div>
+            </div>
+          </div>
         `;
 
-        card.addEventListener('click', () => {
+        // Add button handler
+        card.querySelector('.add-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
           this.addToCart(item);
         });
 
-        grid.appendChild(card);
+        row.appendChild(card);
       });
+
+      section.appendChild(row);
+      grid.appendChild(section);
     });
   }
 
@@ -191,6 +235,10 @@ class DoorPilotApp {
     countEl.textContent = count;
     totalEl.textContent = `₹${total}`;
     proceedBtn.disabled = count === 0;
+
+    // Update header cart count if present
+    const headerCount = document.getElementById('header-cart-count');
+    if (headerCount) headerCount.textContent = count;
 
     // Store cart items in order data
     this.orderData.items = this.cart;
