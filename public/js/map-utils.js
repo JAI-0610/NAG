@@ -18,12 +18,13 @@ class MapManager {
     }
 
     // Start with a world view; we'll fly to real location right away
-    this.map = L.map(containerId, { zoomControl: true }).setView([20.5937, 78.9629], 5);
+    this.map = L.map(containerId, { zoomControl: true, maxZoom: 20 }).setView([20.5937, 78.9629], 5);
 
-    // OpenStreetMap tiles
+    // OpenStreetMap tiles — shows buildings, grass, paths at zoom 19+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 19
+      maxZoom: 20,
+      maxNativeZoom: 19
     }).addTo(this.map);
 
     // CRITICAL: force Leaflet to recalculate size after the container is visible

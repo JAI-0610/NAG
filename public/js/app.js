@@ -859,13 +859,14 @@ class DoorPilotApp {
     let modalLat = null, modalLng = null, miniMap = null, myMarker = null, myCircle = null;
 
     // Init map immediately at a sensible default, then fly to GPS
-    miniMap = L.map('loc-modal-map', { zoomControl: false, attributionControl: false })
+    miniMap = L.map('loc-modal-map', { zoomControl: false, attributionControl: false, maxZoom: 20 })
                .setView([20.5937, 78.9629], 5);
 
-    // Use CartoDB Voyager — clean, detailed street map (same style as the reference image)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd'
+    // Use OpenStreetMap standard — shows buildings, grass, paths at zoom 19+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 20,
+      maxNativeZoom: 19,
+      attribution: '© OpenStreetMap'
     }).addTo(miniMap);
 
     // Zoom controls top-right
@@ -875,7 +876,7 @@ class DoorPilotApp {
 
     // Recenter button
     document.getElementById('loc-recenter').addEventListener('click', () => {
-      if (modalLat) miniMap.flyTo([modalLat, modalLng], 18, { animate: true, duration: 0.8 });
+      if (modalLat) miniMap.flyTo([modalLat, modalLng], 19, { animate: true, duration: 0.8 });
     });
 
     // GPS — high accuracy
@@ -931,8 +932,8 @@ class DoorPilotApp {
           weight: 1.5
         }).addTo(miniMap);
 
-        // Fly to exact location at street level
-        miniMap.flyTo([modalLat, modalLng], 18, { animate: true, duration: 1.2 });
+        // Fly to exact location at street level (zoom 17 = neighbourhood, user can zoom to 20 for buildings)
+        miniMap.flyTo([modalLat, modalLng], 17, { animate: true, duration: 1.2 });
 
         // Reverse geocode — get place name + full address
         document.getElementById('loc-place-name').textContent = 'Fetching address…';
