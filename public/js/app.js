@@ -380,37 +380,105 @@ class DoorPilotApp {
   setupDeliveryDetailsForm() {
     const form = document.getElementById('delivery-form');
 
+    // ── Auto-save: save draft on every input change ──────────────────────
+    const FIELD_IDS = [
+      'apartment-name', 'colony-name', 'flat-number', 'house-number',
+      'flat-color', 'gate-number', 'staircase-color',
+      'floor-number', 'intercom-code', 'special-identifiers',
+      'customer-name', 'customer-phone'
+    ];
+    const CHECKBOX_IDS = ['has-lift', 'is-left-side'];
+
+    const _collectFormData = () => ({
+      apartmentName:     document.getElementById('apartment-name').value,
+      colonyName:        document.getElementById('colony-name').value,
+      flatNumber:        document.getElementById('flat-number').value,
+      houseNumber:       document.getElementById('house-number').value,
+      flatColor:         document.getElementById('flat-color').value,
+      gateNumber:        document.getElementById('gate-number').value,
+      staircaseColor:    document.getElementById('staircase-color').value,
+      hasLift:           document.getElementById('has-lift').checked,
+      isLeftSide:        document.getElementById('is-left-side').checked,
+      floorNumber:       document.getElementById('floor-number').value,
+      intercomCode:      document.getElementById('intercom-code').value,
+      specialIdentifiers:document.getElementById('special-identifiers').value,
+      customerName:      document.getElementById('customer-name').value,
+      customerPhone:     document.getElementById('customer-phone').value,
+    });
+
+    const _autoSave = () => {
+      const data = _collectFormData();
+      db.save('drafts', { id: 'delivery-form', ...data }).catch(() => {});
+      // Show a subtle saved indicator
+      const btn = document.getElementById('next-location-btn');
+      if (btn) {
+        btn.dataset.origText = btn.dataset.origText || btn.textContent;
+        btn.textContent = '✓ Draft saved';
+        clearTimeout(this._autoSaveTimer);
+        this._autoSaveTimer = setTimeout(() => {
+          btn.textContent = btn.dataset.origText;
+        }, 1200);
+      }
+    };
+
+    FIELD_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', _autoSave);
+    });
+    CHECKBOX_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', _autoSave);
+    });
+
+    // ── Auto-restore: fill form from saved draft ─────────────────────────
+    db.get('drafts', 'delivery-form').then(saved => {
+      if (!saved) return;
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+      const chk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+      set('apartment-name',      saved.apartmentName);
+      set('colony-name',         saved.colonyName);
+      set('flat-number',         saved.flatNumber);
+      set('house-number',        saved.houseNumber);
+      set('flat-color',          saved.flatColor);
+      set('gate-number',         saved.gateNumber);
+      set('staircase-color',     saved.staircaseColor);
+      set('floor-number',        saved.floorNumber);
+      set('intercom-code',       saved.intercomCode);
+      set('special-identifiers', saved.specialIdentifiers);
+      set('customer-name',       saved.customerName);
+      set('customer-phone',      saved.customerPhone);
+      chk('has-lift',            saved.hasLift);
+      chk('is-left-side',        saved.isLeftSide);
+    }).catch(() => {});
+
+    // ── Next button ───────────────────────────────────────────────────────
     document.getElementById('next-location-btn').addEventListener('click', (e) => {
       e.preventDefault();
 
-      // Validate form
       if (!form.checkValidity()) {
         alert('Please fill all required fields');
         return;
       }
 
-      // Collect form data
+      const data = _collectFormData();
       this.orderData.deliveryDetails = {
-        apartmentName: document.getElementById('apartment-name').value,
-        colonyName: document.getElementById('colony-name').value,
-        flatNumber: document.getElementById('flat-number').value,
-        houseNumber: document.getElementById('house-number').value,
-        flatColor: document.getElementById('flat-color').value,
-        gateNumber: document.getElementById('gate-number').value,
-        staircaseColor: document.getElementById('staircase-color').value,
-        hasLift: document.getElementById('has-lift').checked,
-        isLeftSide: document.getElementById('is-left-side').checked,
-        floorNumber: document.getElementById('floor-number').value,
-        intercomCode: document.getElementById('intercom-code').value,
-        specialIdentifiers: document.getElementById('special-identifiers').value
+        apartmentName:      data.apartmentName,
+        colonyName:         data.colonyName,
+        flatNumber:         data.flatNumber,
+        houseNumber:        data.houseNumber,
+        flatColor:          data.flatColor,
+        gateNumber:         data.gateNumber,
+        staircaseColor:     data.staircaseColor,
+        hasLift:            data.hasLift,
+        isLeftSide:         data.isLeftSide,
+        floorNumber:        data.floorNumber,
+        intercomCode:       data.intercomCode,
+        specialIdentifiers: data.specialIdentifiers,
       };
+      this.orderData.customerName  = data.customerName;
+      this.orderData.customerPhone = data.customerPhone;
 
-      this.orderData.customerName = document.getElementById('customer-name').value;
-      this.orderData.customerPhone = document.getElementById('customer-phone').value;
-
-      // Save draft
       this.saveDraft();
-
       this.showPage('map');
     });
   }
