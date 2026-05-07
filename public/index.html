@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/animations.css">
   <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/overrides.css">
   
   <!-- Leaflet Maps (OSM) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
@@ -272,26 +273,42 @@
 
         <!-- Category strip: horizontal scrollable pills -->
         <div class="categories" id="categories">
-          <button class="category-pill">Groceries</button>
-          <button class="category-pill">Food</button>
-          <button class="category-pill">Medicines</button>
-          <button class="category-pill">Documents</button>
-          <button class="category-pill">Parcel</button>
-          <button class="category-pill">Essentials</button>
+          <button class="category-pill active" data-category="all">All</button>
+          <button class="category-pill" data-category="🥬 Groceries">Groceries</button>
+          <button class="category-pill" data-category="🍔 Food">Food</button>
+          <button class="category-pill" data-category="🍿 Snacks">Snacks</button>
+          <button class="category-pill" data-category="🍪 Cookies">Cookies</button>
+          <button class="category-pill" data-category="🥤 Beverages">Beverages</button>
+          <button class="category-pill" data-category="💊 Medicines">Medicines</button>
+          <button class="category-pill" data-category="📄 Documents">Documents</button>
         </div>
 
         <div class="items-grid" id="items-grid">
           <!-- Items will be loaded here -->
         </div>
 
-        <div class="cart-summary">
+        <div class="cart-summary" id="cart-summary-bar">
           <div class="cart-info">
-            <span>Items in cart: <strong id="cart-count">0</strong></span>
-            <span>Total: <strong id="cart-total">₹0</strong></span>
+            <div class="cart-info-left">
+              <span class="cart-items-label">🛒 <strong id="cart-count">0</strong> items</span>
+              <span class="cart-total-label">Total: <strong id="cart-total">₹0</strong></span>
+            </div>
           </div>
-          <button id="proceed-btn" class="btn btn-primary btn-block" disabled aria-label="Proceed to delivery details">Proceed to Delivery Details</button>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button id="clear-cart-btn" class="btn" style="background:#fff3;color:#fff;border:1px solid #fff5;font-size:12px;padding:8px 12px;border-radius:50px;" aria-label="Clear cart">🗑 Clear</button>
+            <button id="proceed-btn" class="btn btn-primary proceed-btn-mobile" disabled aria-label="Proceed to delivery details">Proceed →</button>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Sticky Cart Bar -->
+    <div id="sticky-cart-bar" style="display:none !important;">
+      <div class="sticky-cart-info">
+        <span class="sticky-cart-count">🛒 <span id="sticky-cart-count">0</span> items</span>
+        <span class="sticky-cart-total">₹<span id="sticky-cart-total">0</span></span>
+      </div>
+      <button class="sticky-proceed-btn" id="sticky-proceed-btn" disabled>Proceed to Delivery →</button>
     </div>
 
     <!-- Delivery Details Page -->

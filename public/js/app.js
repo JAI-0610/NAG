@@ -130,79 +130,178 @@ class DoorPilotApp {
   async loadItems() {
     try {
       const items = await api.getItems();
-      this.renderItems(items);
+      this.fullCatalog = items;
     } catch (err) {
       console.warn('API items load failed, using local sample catalog:', err);
-
-      // Fallback sample catalog with realistic product images (Unsplash / public images)
-      const sampleCatalog = {
-        "Snacks": [
-          { id: 'lays-01', name: 'Lays Classic Chips - 50g', price: 25, img: 'https://images.unsplash.com/photo-1606813902833-3c4a6b7a9b7b?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=1f3e3e6f1a4d6c9f9b8a' },
-          { id: 'popcorn-01', name: 'Butter Popcorn - 100g', price: 45, img: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=9c7b1a2f4b9c8f1c2d3a' }
+      this.fullCatalog = {
+        "🥬 Groceries": [
+          { id: 'tomato-01',    name: 'Fresh Tomatoes',   price: 30,  img: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?w=400' },
+          { id: 'potato-01',   name: 'Potatoes 1kg',      price: 40,  img: 'https://images.pexels.com/photos/144248/potatoes-vegetables-erdfrucht-bio-144248.jpeg?w=400' },
+          { id: 'onion-01',    name: 'Onions 1kg',        price: 35,  img: 'https://images.pexels.com/photos/175414/pexels-photo-175414.jpeg?w=400' },
+          { id: 'carrot-01',   name: 'Carrots 500g',      price: 30,  img: 'https://images.pexels.com/photos/1306559/pexels-photo-1306559.jpeg?w=400' },
+          { id: 'capsicum-01', name: 'Capsicum 3pcs',     price: 45,  img: 'https://images.pexels.com/photos/594137/pexels-photo-594137.jpeg?w=400' },
+          { id: 'spinach-01',  name: 'Fresh Spinach',     price: 25,  img: 'https://images.pexels.com/photos/2325843/pexels-photo-2325843.jpeg?w=400' },
+          { id: 'milk-01',     name: 'Fresh Milk 500ml',  price: 30,  img: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?w=400' },
+          { id: 'bread-01',    name: 'Whole Wheat 1kg',   price: 45,  img: 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?w=400' },
+          { id: 'eggs-01',     name: 'Farm Eggs 6pcs',    price: 60,  img: 'https://images.pexels.com/photos/162712/egg-white-food-protein-162712.jpeg?w=400' }
         ],
-        "Cookies": [
-          { id: 'unibic-01', name: 'Unibic Chocolate Chip Cookies - 100g', price: 60, img: 'https://images.unsplash.com/photo-1604908177522-8b5f2b0d1d1d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3d1e2f4e5a6b7c8d9e0f' },
-          { id: 'oreo-01', name: 'Oreo Chocolate Sandwich - 95g', price: 40, img: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=5b6c7d8e9f0a1b2c3d4e' }
+        "🍔 Food": [
+          { id: 'burger-01',   name: 'Veg Burger',        price: 120, img: 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?w=400' },
+          { id: 'pizza-01',    name: 'Margherita Pizza',  price: 199, img: 'https://images.pexels.com/photos/825661/pexels-photo-825661.jpeg?w=400' },
+          { id: 'biryani-01',  name: 'Veg Biryani',      price: 150, img: 'https://images.pexels.com/photos/7426873/pexels-photo-7426873.jpeg?w=400' },
+          { id: 'dosa-01',     name: 'Masala Dosa',      price: 90,  img: 'https://images.pexels.com/photos/5560763/pexels-photo-5560763.jpeg?w=400' },
+          { id: 'sandwich-01', name: 'Grilled Sandwich',  price: 80,  img: 'https://images.pexels.com/photos/1647163/pexels-photo-1647163.jpeg?w=400' }
         ],
-        "Beverages": [
-          { id: 'cola-01', name: 'Spark Cola 300ml', price: 30, img: 'https://images.unsplash.com/photo-1601050690597-5b8f0d3d1a2b?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=7e8f9a0b1c2d3e4f5a6b' }
+        "🍿 Snacks": [
+          { id: 'chips-01',    name: "Lay's Chips",       price: 25,  img: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=400' },
+          { id: 'popcorn-01',  name: 'Butter Popcorn',   price: 45,  img: 'https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg?w=400' },
+          { id: 'nachos-01',   name: 'Nachos & Salsa',   price: 55,  img: 'https://images.pexels.com/photos/1108117/pexels-photo-1108117.jpeg?w=400' },
+          { id: 'biscuit-01',  name: 'Marie Biscuits',   price: 20,  img: 'https://images.pexels.com/photos/890515/pexels-photo-890515.jpeg?w=400' },
+          { id: 'pringles-01', name: 'Pringles Original',price: 99,  img: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=400' }
+        ],
+        "🍪 Cookies": [
+          { id: 'chocochip-01',     name: 'Choc Chunk Cookies', price: 60,  img: 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?w=400' },
+          { id: 'oreo-01',          name: 'Oreo Sandwich',      price: 40,  img: 'https://images.pexels.com/photos/3026804/pexels-photo-3026804.jpeg?w=400' },
+          { id: 'butter-cookie-01', name: 'Butter Cookies',     price: 120, img: 'https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?w=400' },
+          { id: 'digestive-01',     name: 'Digestive Biscuit',  price: 55,  img: 'https://images.pexels.com/photos/890515/pexels-photo-890515.jpeg?w=400' },
+          { id: 'goodday-01',       name: 'Good Day Cashew',    price: 30,  img: 'https://images.pexels.com/photos/1028714/pexels-photo-1028714.jpeg?w=400' }
+        ],
+        "🥤 Beverages": [
+          { id: 'cola-01',   name: 'Coca Cola 300ml',    price: 40,  img: 'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg?w=400' },
+          { id: 'water-01',  name: 'Bisleri Water 1L',   price: 20,  img: 'https://images.pexels.com/photos/327090/pexels-photo-327090.jpeg?w=400' },
+          { id: 'soda-01',   name: 'Faurito Soda',       price: 30,  img: 'https://images.pexels.com/photos/2983100/pexels-photo-2983100.jpeg?w=400' },
+          { id: 'juice-01',  name: 'Orange Juice',       price: 35,  img: 'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?w=400' },
+          { id: 'coffee-01', name: 'Sleepy Owl Coffee',  price: 299, img: 'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?w=400' },
+          { id: 'lassi-01',  name: 'Sweet Lassi',        price: 50,  img: 'https://images.pexels.com/photos/3625372/pexels-photo-3625372.jpeg?w=400' }
+        ],
+        "💊 Medicines": [
+          { id: 'paracetamol-01', name: 'Paracetamol 650mg',    price: 25,  img: 'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg?w=400' },
+          { id: 'bandaid-01',     name: 'Band-Aid Flex',        price: 35,  img: 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?w=400' },
+          { id: 'cough-01',       name: 'Cough Syrup',          price: 85,  img: 'https://images.pexels.com/photos/3683074/pexels-photo-3683074.jpeg?w=400' },
+          { id: 'sanitizer-01',   name: 'Hand Sanitizer',       price: 60,  img: 'https://images.pexels.com/photos/3873193/pexels-photo-3873193.jpeg?w=400' },
+          { id: 'vitaminc-01',    name: 'Vitamin C 500mg',      price: 50,  img: 'https://images.pexels.com/photos/159211/headache-pain-pills-medication-159211.jpeg?w=400' }
+        ],
+        "📄 Documents": [
+          { id: 'print-01',    name: 'A4 Printing',      price: 5,   img: 'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?w=400' },
+          { id: 'envelope-01', name: 'Courier Envelope', price: 15,  img: 'https://images.pexels.com/photos/1591062/pexels-photo-1591062.jpeg?w=400' },
+          { id: 'stamp-01',    name: 'Postage Stamp',    price: 10,  img: 'https://images.pexels.com/photos/1591062/pexels-photo-1591062.jpeg?w=400' },
+          { id: 'folder-01',   name: 'Document Folder',  price: 30,  img: 'https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?w=400' },
+          { id: 'pen-01',      name: 'Ball Pen Pack',    price: 20,  img: 'https://images.pexels.com/photos/159751/book-address-book-learning-learn-159751.jpeg?w=400' }
         ]
       };
-
-      this.renderItems(sampleCatalog);
     }
+
+    this.selectedCategory = 'all';
+    this.setupCategoryFilter();
+    this.renderCatalog();
   }
 
-  renderItems(catalogItems) {
+  setupCategoryFilter() {
+    document.querySelectorAll('.category-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.selectedCategory = btn.dataset.category;
+        this.renderCatalog();
+      });
+    });
+  }
+
+  renderCatalog() {
     const grid = document.getElementById('items-grid');
     grid.innerHTML = '';
-    // Render categories as grouped sections for a marketplace feel
-    Object.keys(catalogItems).forEach(category => {
-      const section = document.createElement('section');
-      section.className = 'catalog-section container';
 
-      const header = document.createElement('div');
-      header.className = 'catalog-header';
-      header.innerHTML = `<h2>${category}</h2>`;
-      section.appendChild(header);
+    const catalog = this.fullCatalog;
+    const selected = this.selectedCategory;
+
+    const categoriesToShow = selected === 'all'
+      ? Object.keys(catalog)
+      : Object.keys(catalog).filter(k => k === selected);
+
+    if (categoriesToShow.length === 0) {
+      grid.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">No items found</p>';
+      return;
+    }
+
+    categoriesToShow.forEach(category => {
+      const section = document.createElement('div');
+      section.className = 'catalog-section';
+
+      section.innerHTML = `<h2 class="cat-title">${category}</h2>`;
 
       const row = document.createElement('div');
-      row.className = 'items-grid';
+      row.className = 'product-grid';
 
-      catalogItems[category].forEach(item => {
+      catalog[category].forEach(item => {
         const card = document.createElement('div');
-        card.className = 'item-card';
+        card.className = 'product-card';
         card.innerHTML = `
-          <div class="item-img">
-            <img src="${item.img}" alt="${item.name}">
+          <div class="product-img">
+            <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null;this.src='https://placehold.co/200x140/f5f5f5/FFB800?text=${encodeURIComponent(item.name)}'">
           </div>
-          <div class="item-body">
-            <div class="item-meta">
-              <div>
-                <div class="item-name">${item.name}</div>
-                <div class="item-sub">Fast delivery • 20-30 mins</div>
+          <div class="product-info">
+            <div class="product-name">${item.name}</div>
+            <div class="product-meta">20-30 mins</div>
+            <div class="product-footer">
+              <span class="product-price">₹${item.price}</span>
+              <div class="qty-control hidden" id="qty-ctrl-${item.id}">
+                <button class="qty-btn qty-minus" aria-label="Remove one ${item.name}">−</button>
+                <span class="qty-num" id="qty-num-${item.id}">0</span>
+                <button class="qty-btn qty-plus" aria-label="Add one ${item.name}">+</button>
               </div>
-              <div class="item-price">₹${item.price}</div>
-            </div>
-            <div class="item-row">
-              <div class="item-qty">In cart: <span id="qty-${item.id}">0</span></div>
-              <div class="item-cta"><button class="add-btn">ADD</button></div>
+              <button class="product-add-btn" id="add-btn-${item.id}" aria-label="Add ${item.name} to cart">ADD</button>
             </div>
           </div>
         `;
 
-        // Add button handler
-        card.querySelector('.add-btn').addEventListener('click', (e) => {
+        // ADD button — show qty controls
+        card.querySelector('.product-add-btn').addEventListener('click', (e) => {
           e.stopPropagation();
           this.addToCart(item);
+          document.getElementById(`add-btn-${item.id}`).classList.add('hidden');
+          document.getElementById(`qty-ctrl-${item.id}`).classList.remove('hidden');
+          document.getElementById(`qty-num-${item.id}`).textContent = this.getItemQty(item.id);
         });
 
+        // + button
+        card.querySelector('.qty-plus').addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.addToCart(item);
+          document.getElementById(`qty-num-${item.id}`).textContent = this.getItemQty(item.id);
+        });
+
+        // - button
+        card.querySelector('.qty-minus').addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.removeFromCart(item.id);
+          const qty = this.getItemQty(item.id);
+          document.getElementById(`qty-num-${item.id}`).textContent = qty;
+          if (qty === 0) {
+            document.getElementById(`add-btn-${item.id}`).classList.remove('hidden');
+            document.getElementById(`qty-ctrl-${item.id}`).classList.add('hidden');
+          }
+        });
+
+        // Restore qty state if item already in cart
+        const existingQty = this.getItemQty(item.id);
+        if (existingQty > 0) {
+          card.querySelector(`#add-btn-${item.id}`).classList.add('hidden');
+          card.querySelector(`#qty-ctrl-${item.id}`).classList.remove('hidden');
+          card.querySelector(`#qty-num-${item.id}`).textContent = existingQty;
+        }
         row.appendChild(card);
       });
 
       section.appendChild(row);
       grid.appendChild(section);
     });
+  }
+
+  renderItems(catalogItems) {
+    this.fullCatalog = catalogItems;
+    this.selectedCategory = 'all';
+    this.setupCategoryFilter();
+    this.renderCatalog();
   }
 
   addToCart(item) {
@@ -216,6 +315,25 @@ class DoorPilotApp {
 
     this.updateCartUI();
     this.saveCart();
+  }
+
+  removeFromCart(itemId) {
+    const existing = this.cart.find(i => i.id === itemId);
+    if (!existing) return;
+
+    if (existing.quantity > 1) {
+      existing.quantity -= 1;
+    } else {
+      this.cart = this.cart.filter(i => i.id !== itemId);
+    }
+
+    this.updateCartUI();
+    this.saveCart();
+  }
+
+  getItemQty(itemId) {
+    const item = this.cart.find(i => i.id === itemId);
+    return item ? item.quantity : 0;
   }
 
   updateCartUI() {
@@ -260,69 +378,41 @@ class DoorPilotApp {
 
   // ==================== DELIVERY DETAILS ====================
   setupDeliveryDetailsForm() {
-    const btn = document.getElementById('next-location-btn');
-    if (!btn || btn._bound) return;
-    btn._bound = true;
+    const form = document.getElementById('delivery-form');
 
-    btn.addEventListener('click', () => {
-      // Safe value helper
-      const val = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-      const chk = (id) => { const el = document.getElementById(id); return el ? el.checked : false; };
+    document.getElementById('next-location-btn').addEventListener('click', (e) => {
+      e.preventDefault();
 
-      // Manual required field check
-      const required = [
-        { id: 'apartment-name', label: 'Apartment/Building name' },
-        { id: 'colony-name',    label: 'Colony/Society name' },
-        { id: 'flat-number',    label: 'Flat/Unit number' },
-        { id: 'customer-name',  label: 'Your full name' },
-        { id: 'customer-phone', label: 'Phone number' }
-      ];
-
-      for (const f of required) {
-        if (!val(f.id)) {
-          const el = document.getElementById(f.id);
-          if (el) { el.focus(); el.style.borderColor = '#dc2626'; }
-          this._showFieldError(f.id, `${f.label} is required`);
-          return;
-        }
-        // Reset border
-        const el = document.getElementById(f.id);
-        if (el) el.style.borderColor = '';
+      // Validate form
+      if (!form.checkValidity()) {
+        alert('Please fill all required fields');
+        return;
       }
 
+      // Collect form data
       this.orderData.deliveryDetails = {
-        apartmentName:      val('apartment-name'),
-        colonyName:         val('colony-name'),
-        flatNumber:         val('flat-number'),
-        flatColor:          val('flat-color'),
-        gateNumber:         val('gate-number'),
-        staircaseColor:     val('staircase-color'),
-        hasLift:            chk('has-lift'),
-        isLeftSide:         chk('is-left-side'),
-        floorNumber:        val('floor-number'),
-        intercomCode:       val('intercom-code'),
-        specialIdentifiers: val('special-identifiers')
+        apartmentName: document.getElementById('apartment-name').value,
+        colonyName: document.getElementById('colony-name').value,
+        flatNumber: document.getElementById('flat-number').value,
+        houseNumber: document.getElementById('house-number').value,
+        flatColor: document.getElementById('flat-color').value,
+        gateNumber: document.getElementById('gate-number').value,
+        staircaseColor: document.getElementById('staircase-color').value,
+        hasLift: document.getElementById('has-lift').checked,
+        isLeftSide: document.getElementById('is-left-side').checked,
+        floorNumber: document.getElementById('floor-number').value,
+        intercomCode: document.getElementById('intercom-code').value,
+        specialIdentifiers: document.getElementById('special-identifiers').value
       };
 
-      this.orderData.customerName  = val('customer-name');
-      this.orderData.customerPhone = val('customer-phone');
+      this.orderData.customerName = document.getElementById('customer-name').value;
+      this.orderData.customerPhone = document.getElementById('customer-phone').value;
 
+      // Save draft
       this.saveDraft();
+
       this.showPage('map');
     });
-  }
-
-  _showFieldError(id, msg) {
-    const existing = document.getElementById('field-error-' + id);
-    if (existing) existing.remove();
-    const el = document.getElementById(id);
-    if (!el) return;
-    const err = document.createElement('div');
-    err.id = 'field-error-' + id;
-    err.style.cssText = 'color:#dc2626;font-size:12px;margin:-8px 0 8px 4px;';
-    err.textContent = '⚠ ' + msg;
-    el.insertAdjacentElement('afterend', err);
-    setTimeout(() => err.remove(), 3000);
   }
 
   // ==================== VOICE & LANDMARKS ====================
@@ -384,27 +474,24 @@ class DoorPilotApp {
   stopVoiceRecording() {
     clearInterval(this.recordingInterval);
 
-    // stopRecording() now returns a Promise<Blob>
-    voiceRecorder.stopRecording().then((blob) => {
-      if (!blob) return;
-      this.voiceBlob = blob;
+    this.voiceBlob = voiceRecorder.stopRecording();
+    voiceRecorder.clearRecording();
 
-      document.getElementById('start-recording').classList.remove('hidden');
-      document.getElementById('stop-recording').classList.add('hidden');
-      document.getElementById('recording-time').classList.add('hidden');
+    document.getElementById('start-recording').classList.remove('hidden');
+    document.getElementById('stop-recording').classList.add('hidden');
+    document.getElementById('recording-time').classList.add('hidden');
 
-      // Show playback
-      const playback = document.getElementById('voice-playback');
-      playback.innerHTML = '';
-      const audio = voiceRecorder.createAudioElement(blob);
-      if (audio) playback.appendChild(audio);
-      const reRecordBtn = document.createElement('button');
-      reRecordBtn.id = 're-record-btn';
-      reRecordBtn.className = 'btn btn-secondary';
-      reRecordBtn.textContent = 'Re-record';
-      reRecordBtn.addEventListener('click', () => this.resetVoiceRecording());
-      playback.appendChild(reRecordBtn);
-      playback.classList.remove('hidden');
+    // Show playback
+    const audio = voiceRecorder.createAudioElement(this.voiceBlob);
+    const playback = document.getElementById('voice-playback');
+    playback.innerHTML = '';
+    playback.appendChild(audio);
+    playback.innerHTML += '<button id="re-record-btn" class="btn btn-secondary">Re-record</button>';
+    playback.classList.remove('hidden');
+
+    // Re-attach event listener
+    document.getElementById('re-record-btn').addEventListener('click', () => {
+      this.resetVoiceRecording();
     });
   }
 
@@ -454,110 +541,74 @@ class DoorPilotApp {
   async confirmAndPlaceOrder() {
     try {
       document.getElementById('confirm-order-btn').disabled = true;
+
+      // Show processing
       this.showPage('processing');
-      document.getElementById('processing-status').textContent = 'Uploading files…';
 
-      // Upload voice note
+      // Upload voice and landmark
       if (this.voiceBlob) {
-        try {
-          const voiceResult = await api.uploadVoice(this.voiceBlob);
-          this.orderData.voiceNoteUrl = voiceResult.url;
-          console.log('✅ Voice uploaded:', voiceResult.url);
-        } catch (e) {
-          console.warn('Voice upload failed (non-fatal):', e.message);
-        }
+        const voiceResult = await api.uploadVoice(this.voiceBlob);
+        this.orderData.voiceNoteUrl = voiceResult.url;
       }
 
-      // Upload landmark image
       if (this.landmarkBlob) {
-        try {
-          const landmarkResult = await api.uploadLandmark(this.landmarkBlob);
-          this.orderData.landmarkImageUrl = landmarkResult.url;
-          console.log('✅ Landmark uploaded:', landmarkResult.url);
-        } catch (e) {
-          console.warn('Landmark upload failed (non-fatal):', e.message);
-        }
+        const landmarkResult = await api.uploadLandmark(this.landmarkBlob);
+        this.orderData.landmarkImageUrl = landmarkResult.url;
       }
 
-      document.getElementById('processing-status').textContent = 'Creating order…';
-
-      // Create order in database
+      // Create order
       const result = await api.createOrder(this.orderData);
       this.currentOrderId = result.orderId;
-      console.log('✅ Order created:', this.currentOrderId);
 
-      // Save locally
+      // Save order locally
       await db.save('orders', { ...result.order, id: this.currentOrderId });
 
       // Show waiting page
       this.showPage('waiting');
-      document.getElementById('order-id-display').textContent =
-        `Order #${this.currentOrderId.substring(0, 8).toUpperCase()}`;
+      document.getElementById('order-id-display').textContent = `Order #${this.currentOrderId.substring(0, 8).toUpperCase()}`;
 
-      // Assign delivery executive after 1s
-      setTimeout(() => this.assignDelivery(), 1000);
-
+      // Simulate delivery executive assignment
+      setTimeout(() => {
+        this.simulateDeliveryAssignment();
+      }, 2000);
     } catch (err) {
       console.error('Error placing order:', err);
-      alert('Failed to place order: ' + err.message);
+      alert('Failed to place order. Please try again.');
       document.getElementById('confirm-order-btn').disabled = false;
-      this.showPage('review');
     }
   }
 
-  async assignDelivery() {
-    // Ask for delivery executive phone
-    const input = prompt(
-      '📱 Enter delivery executive phone number\n(with country code, e.g. +919876543210)\n\nLeave blank to use simulated SMS (check server console for the link):',
-      '+91'
-    );
-
-    if (input === null) {
-      // User cancelled — still assign with dummy phone so link is generated
-    }
-
-    const phone = (input || '').trim() || '+919999999999';
-    const execId = 'exec-' + Math.random().toString(36).substring(2, 9);
-
+  async simulateDeliveryAssignment() {
+    // Simulate finding a delivery executive
     try {
+      // In production, backend would find available executives
+      const deliveryExecutivePhone = '+919876543210'; // Simulated
+      const deliveryExecutiveId = 'exec-' + Math.random().toString(36).substr(2, 9);
+
       const result = await api.assignDeliveryExecutive(
-        this.currentOrderId, phone, execId
+        this.currentOrderId,
+        deliveryExecutivePhone,
+        deliveryExecutiveId
       );
 
-      this.currentDeliveryExecutiveId    = execId;
-      this.currentDeliveryExecutivePhone = phone;
+      console.log('Delivery assigned, SMS sent with Find Me link:', result.findMeLink);
 
-      console.log('✅ Find Me link:', result.findMeLink);
+      // Store delivery executive info
+      this.currentDeliveryExecutiveId = deliveryExecutiveId;
+      this.currentDeliveryExecutivePhone = deliveryExecutivePhone;
 
-      // Show the Find Me link on the waiting page so you can copy/test it
-      const waitingContainer = document.querySelector('.waiting-container');
-      if (waitingContainer && result.findMeLink) {
-        const linkBox = document.createElement('div');
-        linkBox.style.cssText = `
-          margin:16px 0;padding:12px 16px;
-          background:#fff8e1;border:1px solid #FFB800;border-radius:12px;
-          font-size:13px;word-break:break-all;text-align:left;
-        `;
-        linkBox.innerHTML = `
-          <div style="font-weight:700;color:#c47f00;margin-bottom:6px;">🔗 Find Me Link (sent via SMS)</div>
-          <a href="${result.findMeLink}" target="_blank" style="color:#0A2647;">${result.findMeLink}</a>
-          <button onclick="navigator.clipboard.writeText('${result.findMeLink}').then(()=>alert('Copied!'))"
-            style="display:block;margin-top:8px;padding:6px 14px;background:#FFB800;border:none;border-radius:20px;font-weight:700;cursor:pointer;font-size:12px;">
-            📋 Copy Link
-          </button>
-        `;
-        waitingContainer.appendChild(linkBox);
-      }
-
-      this.showNotification(`📱 SMS sent to ${phone}`);
-
+      // Listen for tracking
       if (this.socket) {
         this.socket.emit('track-delivery', this.currentOrderId);
       }
 
+      // Show tracking page
+      setTimeout(() => {
+        this.showPage('tracking');
+      }, 3000);
     } catch (err) {
-      console.error('Assignment error:', err);
-      this.showNotification('⚠️ Could not assign delivery: ' + err.message);
+      console.error('Error assigning delivery executive:', err);
+      alert('Failed to assign delivery executive');
     }
   }
 
@@ -770,11 +821,11 @@ class DoorPilotApp {
 
     // Order page events
     document.getElementById('proceed-btn').addEventListener('click', () => {
-      this.showPage('delivery-details');
       this.setupDeliveryDetailsForm();
+      this.showPage('delivery-details');
     });
 
-    // Delivery details form — also set up now in case page is already visible
+    // Delivery details form setup
     this.setupDeliveryDetailsForm();
 
     // Map page events
@@ -829,6 +880,19 @@ class DoorPilotApp {
       this.showPage('order');
     });
 
+    // Clear cart button
+    document.getElementById('clear-cart-btn').addEventListener('click', () => {
+      this.cart = [];
+      this.orderData.items = [];
+      // Delete entire IndexedDB to fully wipe cart
+      indexedDB.deleteDatabase('DoorPilot');
+      document.getElementById('cart-count').textContent = '0';
+      document.getElementById('cart-total').textContent = '₹0';
+      document.getElementById('header-cart-count').textContent = '0';
+      document.getElementById('proceed-btn').disabled = true;
+      this.renderCatalog();
+    });
+
     // Handle Find Me page if URL contains token
     if (window.location.pathname.includes('/find-me/')) {
       this.showPage('findme');
@@ -863,9 +927,23 @@ class DoorPilotApp {
           <button id="close-loc-modal" style="background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
         </div>
 
+        <!-- Search box -->
+        <div style="padding:10px 14px 6px;background:#fffbee;border-bottom:1px solid #f0e8c8;position:relative;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="loc-search-input" type="text" placeholder="Search your location (e.g. Nagarjuna College...)"
+              style="flex:1;padding:10px 14px;border:1.5px solid #FFB800;border-radius:40px;font-size:14px;outline:none;background:#fff;" />
+            <button id="loc-search-btn" style="padding:10px 16px;background:#FFB800;border:none;border-radius:40px;font-weight:700;font-size:13px;cursor:pointer;">Search</button>
+          </div>
+          <div id="loc-search-results" style="
+            display:none;position:absolute;left:14px;right:14px;top:54px;
+            background:#fff;border:1px solid #e0d8c0;border-radius:12px;
+            box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:100;max-height:200px;overflow-y:auto;
+          "></div>
+        </div>
+
         <!-- Map -->
         <div style="position:relative;">
-          <div id="loc-modal-map" style="height:280px;width:100%;background:#e8e0d8;"></div>
+          <div id="loc-modal-map" style="height:240px;width:100%;background:#e8e0d8;"></div>
           <!-- Loading overlay -->
           <div id="loc-map-loading" style="
             position:absolute;inset:0;background:rgba(255,248,225,0.92);
@@ -926,14 +1004,13 @@ class DoorPilotApp {
     let modalLat = null, modalLng = null, miniMap = null, myMarker = null, myCircle = null;
 
     // Init map immediately at a sensible default, then fly to GPS
-    miniMap = L.map('loc-modal-map', { zoomControl: false, attributionControl: false, maxZoom: 20 })
+    miniMap = L.map('loc-modal-map', { zoomControl: false, attributionControl: false })
                .setView([20.5937, 78.9629], 5);
 
-    // Use OpenStreetMap standard — shows buildings, grass, paths at zoom 19+
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 20,
-      maxNativeZoom: 19,
-      attribution: '© OpenStreetMap'
+    // Use CartoDB Voyager — clean, detailed street map (same style as the reference image)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd'
     }).addTo(miniMap);
 
     // Zoom controls top-right
@@ -943,91 +1020,226 @@ class DoorPilotApp {
 
     // Recenter button
     document.getElementById('loc-recenter').addEventListener('click', () => {
-      if (modalLat) miniMap.flyTo([modalLat, modalLng], 19, { animate: true, duration: 0.8 });
+      if (modalLat) miniMap.flyTo([modalLat, modalLng], 17, { animate: true, duration: 0.8 });
     });
 
-    // GPS — try high accuracy first, fall back to network location
+    // ── Search box ────────────────────────────────────────────────────────
+    const searchInput   = document.getElementById('loc-search-input');
+    const searchBtn     = document.getElementById('loc-search-btn');
+    const searchResults = document.getElementById('loc-search-results');
+
+    const doSearch = async () => {
+      const q = searchInput.value.trim();
+      if (!q) return;
+      searchBtn.textContent = '…';
+      searchResults.style.display = 'none';
+      searchResults.innerHTML = '';
+      try {
+        const r = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1&countrycodes=in`,
+          { headers: { 'Accept-Language': 'en', 'User-Agent': 'DoorPilot/1.0' } }
+        );
+        const results = await r.json();
+        if (!results.length) {
+          searchResults.innerHTML = '<div style="padding:12px 16px;color:#888;font-size:13px;">No results found</div>';
+          searchResults.style.display = 'block';
+        } else {
+          results.forEach(item => {
+            const div = document.createElement('div');
+            div.style.cssText = 'padding:10px 16px;cursor:pointer;border-bottom:1px solid #f0ece0;font-size:13px;';
+            const name = item.display_name.split(',').slice(0, 3).join(', ');
+            div.textContent = name;
+            div.addEventListener('mouseenter', () => div.style.background = '#fffbee');
+            div.addEventListener('mouseleave', () => div.style.background = '');
+            div.addEventListener('click', () => {
+              const lat = parseFloat(item.lat);
+              const lng = parseFloat(item.lon);
+              modalLat = lat; modalLng = lng;
+
+              // Update marker
+              const youIcon = L.divIcon({
+                className: '',
+                html: `<div style="position:relative;width:22px;height:22px;">
+                  <div style="position:absolute;inset:0;border-radius:50%;background:rgba(66,133,244,0.25);animation:markerPulse 2s infinite;"></div>
+                  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#4285F4;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(66,133,244,0.6);"></div>
+                </div>`,
+                iconSize: [22, 22], iconAnchor: [11, 11]
+              });
+              if (myMarker) miniMap.removeLayer(myMarker);
+              if (myCircle) { miniMap.removeLayer(myCircle); myCircle = null; }
+              myMarker = L.marker([lat, lng], { icon: youIcon }).addTo(miniMap);
+              miniMap.flyTo([lat, lng], 17, { animate: true, duration: 1 });
+
+              // Update address display
+              const addr = item.address || {};
+              const finalName = item.display_name.split(',')[0].trim();
+              const shortAddr = [
+                addr.road || addr.pedestrian,
+                addr.neighbourhood || addr.suburb || addr.village,
+                addr.city || addr.town || addr.county,
+                addr.state
+              ].filter(Boolean).join(', ');
+              document.getElementById('loc-place-name').textContent = finalName;
+              document.getElementById('loc-modal-address').textContent = shortAddr || item.display_name;
+              document.getElementById('loc-coords').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+              myMarker.bindPopup(`<b>${finalName}</b><br><small>${shortAddr}</small>`, {
+                offset: [0, -12], closeButton: false
+              }).openPopup();
+
+              searchResults.style.display = 'none';
+              searchInput.value = '';
+            });
+            searchResults.appendChild(div);
+          });
+          searchResults.style.display = 'block';
+        }
+      } catch {
+        searchResults.innerHTML = '<div style="padding:12px 16px;color:#c00;font-size:13px;">Search failed, try again</div>';
+        searchResults.style.display = 'block';
+      }
+      searchBtn.textContent = 'Search';
+    };
+
+    searchBtn.addEventListener('click', doSearch);
+    searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSearch(); });
+    // Close results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchResults.contains(e.target) && e.target !== searchInput && e.target !== searchBtn) {
+        searchResults.style.display = 'none';
+      }
+    });
+    // ─────────────────────────────────────────────────────────────────────
+
+    // GPS — high accuracy
     if (!navigator.geolocation) {
       document.getElementById('loc-place-name').textContent = 'Geolocation not supported';
       document.getElementById('loc-map-loading').style.display = 'none';
       return;
     }
 
-    const doLocate = (highAccuracy, attempt) => {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          modalLat = pos.coords.latitude;
-          modalLng = pos.coords.longitude;
-          const acc = pos.coords.accuracy;
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        modalLat = pos.coords.latitude;
+        modalLng = pos.coords.longitude;
+        const acc = pos.coords.accuracy;
 
-          document.getElementById('loc-map-loading').style.display = 'none';
-          document.getElementById('loc-coords').textContent =
-            `${modalLat.toFixed(6)}, ${modalLng.toFixed(6)}  ±${Math.round(acc)}m` +
-            (acc > 500 ? '  ⚠️ Low accuracy' : '');
+        // Hide loading overlay
+        document.getElementById('loc-map-loading').style.display = 'none';
 
-          const youIcon = L.divIcon({
-            className: '',
-            html: `<div style="position:relative;width:22px;height:22px;">
-              <div style="position:absolute;inset:0;border-radius:50%;background:rgba(66,133,244,0.25);animation:markerPulse 2s infinite;"></div>
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#4285F4;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(66,133,244,0.6);"></div>
+        // Show coords immediately
+        document.getElementById('loc-coords').textContent =
+          `${modalLat.toFixed(6)}, ${modalLng.toFixed(6)}  ±${Math.round(acc)}m`;
+
+        // Pulsing "you are here" dot
+        const youIcon = L.divIcon({
+          className: '',
+          html: `
+            <div style="position:relative;width:22px;height:22px;">
+              <div style="
+                position:absolute;inset:0;border-radius:50%;
+                background:rgba(66,133,244,0.25);
+                animation:markerPulse 2s infinite;
+              "></div>
+              <div style="
+                position:absolute;top:50%;left:50%;
+                transform:translate(-50%,-50%);
+                width:14px;height:14px;border-radius:50%;
+                background:#4285F4;border:2.5px solid #fff;
+                box-shadow:0 2px 6px rgba(66,133,244,0.6);
+              "></div>
             </div>`,
-            iconSize: [22, 22], iconAnchor: [11, 11]
-          });
+          iconSize: [22, 22],
+          iconAnchor: [11, 11]
+        });
 
-          myMarker = L.marker([modalLat, modalLng], { icon: youIcon }).addTo(miniMap);
-          myCircle = L.circle([modalLat, modalLng], {
-            radius: acc, color: '#4285F4', fillColor: '#4285F4', fillOpacity: 0.08, weight: 1.5
-          }).addTo(miniMap);
-          miniMap.flyTo([modalLat, modalLng], 17, { animate: true, duration: 1.2 });
+        myMarker = L.marker([modalLat, modalLng], { icon: youIcon }).addTo(miniMap);
 
-          document.getElementById('loc-place-name').textContent = 'Fetching address…';
-          try {
-            const res = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${modalLat}&lon=${modalLng}&format=json&zoom=18&addressdetails=1`,
-              { headers: { 'Accept-Language': 'en', 'User-Agent': 'DoorPilot/1.0' } }
-            );
-            const geo = await res.json();
-            if (geo && geo.display_name) {
-              const addr = geo.address || {};
-              const placeName = addr.amenity || addr.building || addr.college || addr.university ||
-                addr.school || addr.hospital || addr.shop || addr.road || addr.neighbourhood || addr.suburb || 'Your Location';
-              const shortAddr = [addr.road || addr.pedestrian, addr.neighbourhood || addr.suburb,
-                addr.city || addr.town || addr.village, addr.state].filter(Boolean).join(', ');
-              document.getElementById('loc-place-name').textContent = placeName;
-              document.getElementById('loc-modal-address').textContent = shortAddr || geo.display_name;
-              myMarker.bindPopup(`<b>${placeName}</b><br><small>${shortAddr}</small>`, { offset: [0,-12], closeButton: false }).openPopup();
+        // Accuracy circle
+        myCircle = L.circle([modalLat, modalLng], {
+          radius: acc,
+          color: '#4285F4',
+          fillColor: '#4285F4',
+          fillOpacity: 0.08,
+          weight: 1.5
+        }).addTo(miniMap);
+
+        // Fly to exact location at street level
+        // Use zoom 17 so the surrounding area (campus etc.) is visible
+        miniMap.flyTo([modalLat, modalLng], 17, { animate: true, duration: 1.2 });
+
+        // Reverse geocode — get place name + full address
+        document.getElementById('loc-place-name').textContent = 'Fetching address…';
+        try {
+          // Use Nominatim directly for richer place data
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${modalLat}&lon=${modalLng}&format=json&zoom=16&addressdetails=1`,
+            { headers: { 'Accept-Language': 'en', 'User-Agent': 'DoorPilot/1.0' } }
+          );
+          const geo = await res.json();
+
+          if (geo && geo.display_name) {
+            const addr = geo.address || {};
+
+            // Priority order: named institution > amenity > building > road > neighbourhood
+            const placeName =
+              addr.university || addr.college || addr.school || addr.hospital ||
+              addr.amenity    || addr.building || addr.office || addr.leisure  ||
+              addr.shop       || addr.road     || addr.neighbourhood || addr.suburb ||
+              'Your Location';
+
+            // If the place name still looks like a road/highway (e.g. "NH648"),
+            // try to find a better name from the full display_name
+            let finalName = placeName;
+            if (/^(NH|SH|MDR|ODR|VR)\d+$/i.test(placeName)) {
+              // Extract first meaningful token from display_name before the road
+              const parts = geo.display_name.split(',').map(s => s.trim());
+              const better = parts.find(p =>
+                p.length > 3 &&
+                !/^\d/.test(p) &&
+                !/^(NH|SH|MDR)\d+$/i.test(p)
+              );
+              if (better) finalName = better;
             }
-          } catch {
-            try {
-              const r2 = await fetch(`/api/reverse-geocode?lat=${modalLat}&lng=${modalLng}`);
-              const d2 = await r2.json();
-              if (d2.success) {
-                document.getElementById('loc-place-name').textContent = 'Your Location';
-                document.getElementById('loc-modal-address').textContent = d2.address;
-              }
-            } catch { /* silent */ }
-          }
-        },
-        (err) => {
-          if (highAccuracy && attempt === 1) {
-            // Retry with network/WiFi location
-            doLocate(false, 2);
-            return;
-          }
-          document.getElementById('loc-map-loading').style.display = 'none';
-          const msgs = {
-            1: '❌ Location permission denied.\nClick the 🔒 icon in your address bar → Site settings → Location → Allow, then refresh.',
-            2: '⚠️ Location unavailable. Try on a phone for accurate GPS.',
-            3: '⏱️ Location timed out. Check browser location permissions.'
-          };
-          document.getElementById('loc-place-name').textContent = '⚠️ Location Error';
-          document.getElementById('loc-modal-address').textContent = msgs[err.code] || 'Could not get location';
-        },
-        { enableHighAccuracy: highAccuracy, timeout: highAccuracy ? 8000 : 15000, maximumAge: 30000 }
-      );
-    };
 
-    doLocate(true, 1);
+            const shortAddr = [
+              addr.road || addr.pedestrian,
+              addr.neighbourhood || addr.suburb || addr.village,
+              addr.city || addr.town || addr.county,
+              addr.state
+            ].filter(Boolean).join(', ');
+
+            document.getElementById('loc-place-name').textContent = finalName;
+            document.getElementById('loc-modal-address').textContent = shortAddr || geo.display_name;
+
+            // Add a label popup on the marker
+            myMarker.bindPopup(`<b>${finalName}</b><br><small>${shortAddr}</small>`, {
+              offset: [0, -12], closeButton: false
+            }).openPopup();
+          }
+        } catch {
+          // Fallback to our backend
+          try {
+            const res2 = await fetch(`/api/reverse-geocode?lat=${modalLat}&lng=${modalLng}`);
+            const d2   = await res2.json();
+            if (d2.success) {
+              document.getElementById('loc-place-name').textContent = 'Your Location';
+              document.getElementById('loc-modal-address').textContent = d2.address;
+            }
+          } catch { /* silent */ }
+        }
+      },
+      (err) => {
+        document.getElementById('loc-map-loading').style.display = 'none';
+        const msgs = {
+          1: 'Location permission denied.\nPlease allow location in browser settings.',
+          2: 'Location signal unavailable. Try moving to an open area.',
+          3: 'Location request timed out. Try again.'
+        };
+        document.getElementById('loc-place-name').textContent = '⚠️ Location Error';
+        document.getElementById('loc-modal-address').textContent = msgs[err.code] || 'Could not get location';
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
 
     // Navigate button
     document.getElementById('loc-modal-navigate').addEventListener('click', () => {
