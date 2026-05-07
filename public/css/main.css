@@ -1,19 +1,19 @@
 /* ==================== DESIGN SYSTEM VARIABLES ==================== */
 :root {
-  /* Color Palette - Vibrant delivery-app (Rapido/Zepto inspired) */
-  --primary: #00B14F;          /* Primary Green - Main actions, prominent CTA */
-  --primary-light: #0FA15E;    /* Lighter primary for hovers and accents */
-  --primary-accent: #6C63FF;   /* Accent Indigo - highlights and secondary accents */
-  --success: #00B14F;          /* Success uses primary green */
-  --warning: #FF6B6B;          /* Warning/negative - warm red */
-  --background: #F6F8FA;       /* Very light gray - app background */
-  --surface: #FFFFFF;          /* White - Cards, modals, forms */
+  /* Color Palette - Bright delivery app theme inspired by yellow brand styling */
+  --primary: #FFB800;          /* Main yellow CTA */
+  --primary-light: #FFD440;    /* Lighter yellow for highlights */
+  --primary-accent: #203B6B;   /* Deep blue accent for contrast */
+  --success: #3A8B39;          /* Green success */
+  --warning: #F25C54;          /* Warning/red accent */
+  --background: #FFF7E0;       /* Warm light yellow background */
+  --surface: #FFFFFF;          /* White surfaces */
   
   /* Semantic Colors */
-  --text-primary: #1A1A1A;     /* Main text */
-  --text-secondary: #5A5A5A;   /* Secondary text/labels */
-  --text-tertiary: #8A8A8A;    /* Muted/helper text */
-  --border: #E0E0E0;           /* Borders */
+  --text-primary: #1E1E1E;     /* Main text */
+  --text-secondary: #4D4D4D;   /* Secondary text/labels */
+  --text-tertiary: #7A7A7A;    /* Muted/helper text */
+  --border: rgba(255, 184, 0, 0.18);           /* Soft yellow border */
   
   /* Typography */
   --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -145,19 +145,139 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-accent) 100%);
+  background: linear-gradient(135deg, #FFD33F 0%, #FFB800 55%, #F6A400 100%);
   padding: var(--space-lg);
 }
 
 .landing-hero {
   text-align: center;
-  color: var(--surface);
-  max-width: 500px;
+  color: var(--text-primary);
+  max-width: 540px;
 }
 
 .logo-animation {
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   animation: slideDown 0.8s ease-out;
+}
+
+.hero-animation {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  margin: 32px auto 0;
+  overflow: hidden;
+  border-radius: 28px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), transparent 40%), linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+  box-shadow: var(--shadow-lg);
+}
+
+.road {
+  position: absolute;
+  left: 0;
+  bottom: 22px;
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(90deg, rgba(20,20,20,0.08), rgba(20,20,20,0.1));
+  border-radius: 9999px;
+}
+
+.scooter {
+  position: absolute;
+  bottom: 36px;
+  left: -120px;
+  width: 140px;
+  height: 90px;
+  animation: rideAcross 4s ease-in-out infinite;
+}
+
+.scooter-body {
+  position: absolute;
+  bottom: 0;
+  left: 22px;
+  width: 76px;
+  height: 34px;
+  border-radius: 20px 20px 10px 10px;
+  background: #1E1E1E;
+}
+
+.scooter-head {
+  position: absolute;
+  bottom: 24px;
+  left: 80px;
+  width: 28px;
+  height: 22px;
+  border-radius: 50% 50% 20% 20%;
+  background: #1E1E1E;
+}
+
+.scooter-helmet {
+  position: absolute;
+  bottom: 44px;
+  left: 88px;
+  width: 22px;
+  height: 20px;
+  border-radius: 50% 50% 40% 40%;
+  background: var(--primary);
+  border: 3px solid #1E1E1E;
+}
+
+.scooter-wheel {
+  position: absolute;
+  bottom: -8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #1E1E1E;
+  border: 5px solid #FFD440;
+  animation: wheelSpin 0.6s linear infinite;
+}
+
+.wheel-back { left: 10px; }
+
+.wheel-front { right: 12px; }
+
+.scooter-tail {
+  position: absolute;
+  bottom: 22px;
+  left: 6px;
+  width: 28px;
+  height: 8px;
+  border-radius: 5px;
+  background: var(--primary);
+}
+
+@keyframes rideAcross {
+  0% { left: -140px; transform: translateY(0) scale(1); }
+  50% { left: calc(100% + 20px); transform: translateY(-8px) scale(1.03); }
+  100% { left: -140px; transform: translateY(0) scale(1); }
+}
+
+@keyframes wheelSpin {
+  to { transform: rotate(360deg); }
+}
+
+.hero-animation::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.32);
+  filter: blur(10px);
+}
+
+.hero-animation::after {
+  content: 'Fast delivery to your door';
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  color: #1C1C1C;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  opacity: 0.8;
 }
 
 .doorpilot-logo {
@@ -216,9 +336,9 @@ body {
   position: sticky;
   top: 0;
   width: 100%;
-  background: rgba(255,255,255,0.98);
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid rgba(16,24,40,0.04);
+  background: rgba(255, 211, 64, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 184, 0, 0.4);
   z-index: var(--z-sticky);
 }
 
@@ -229,8 +349,8 @@ body {
   padding: 10px 16px;
 }
 
-.header-logo { width: 36px; height: 36px; border-radius: 8px; margin-right: 8px; }
-.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--primary); }
+.header-logo { width: 36px; height: 36px; border-radius: 10px; margin-right: 8px; box-shadow: var(--shadow-sm); }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text-primary); }
 .logo .brand { font-size: 18px; }
 
 .search-wrap { flex: 1; }
@@ -238,7 +358,7 @@ body {
   width: 100%;
   padding: 10px 14px;
   border-radius: 9999px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 184, 0, 0.25);
   font-size: 14px;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
@@ -249,8 +369,8 @@ body {
 .cart-count { display: inline-block; margin-left: 6px; background: var(--surface); color: var(--primary); padding: 2px 8px; border-radius: 9999px; font-weight: 700; font-size: 13px; box-shadow: var(--shadow-sm); }
 
 /* ==================== CATEGORIES STRIP ==================== */
-.categories { display: flex; gap: 10px; overflow-x: auto; padding: 12px 6px 18px 6px; -webkit-overflow-scrolling: touch; }
-.category-pill { flex: 0 0 auto; padding: 8px 14px; border-radius: 9999px; background: var(--surface); border: 1px solid var(--border); font-weight: 600; color: var(--text-primary); cursor: pointer; box-shadow: var(--shadow-sm); }
+.categories { display: flex; gap: 10px; overflow-x: auto; padding: 12px 6px 18px 6px; -webkit-overflow-scrolling: touch; background: rgba(255, 184, 0, 0.1); border-radius: 22px; }
+.category-pill { flex: 0 0 auto; padding: 10px 16px; border-radius: 9999px; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 184, 0, 0.25); font-weight: 700; color: var(--text-primary); cursor: pointer; box-shadow: var(--shadow-sm); }
 .category-pill:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 
 /* ==================== PRODUCT / ITEM CARD REWORK ==================== */
@@ -316,24 +436,24 @@ body {
 .btn-primary {
   background: linear-gradient(90deg, var(--primary), var(--primary-light));
   color: var(--surface);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.3px;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(90deg, var(--primary-light), var(--primary-accent));
+  background: linear-gradient(90deg, var(--primary-light), var(--primary));
   box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
-  background: var(--surface);
+  background: rgba(255, 184, 0, 0.14);
   color: var(--text-primary);
-  border: 1px solid rgba(10,10,10,0.06);
+  border: 1px solid rgba(255, 184, 0, 0.25);
   font-weight: 600;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--background);
+  background: rgba(255, 184, 0, 0.24);
 }
 
 .btn-success {
@@ -377,7 +497,7 @@ body {
 
 .form-section {
   padding: var(--space-lg);
-  background: var(--background);
+  background: #FFF8D9;
   border-radius: var(--radius-md);
   border-left: 4px solid var(--primary);
 }
@@ -445,9 +565,9 @@ body {
 }
 
 .item-card {
-  background: linear-gradient(180deg, var(--surface), #fbfdff);
-  border: 1px solid rgba(16,24,40,0.04);
-  border-radius: 14px;
+  background: linear-gradient(180deg, #FFFDF0, #FFF8E0);
+  border: 1px solid rgba(255, 184, 0, 0.24);
+  border-radius: 18px;
   padding: calc(var(--space-lg) + 4px);
   text-align: center;
   cursor: pointer;
@@ -455,9 +575,9 @@ body {
 }
 
 .item-card:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow);
-  transform: translateY(-2px);
+  border-color: rgba(255, 184, 0, 0.45);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
 }
 
 .item-card.selected {
@@ -495,9 +615,9 @@ body {
 .cart-summary {
   position: sticky;
   bottom: 0;
-  background: linear-gradient(90deg, #ffffff, #fbfffb);
+  background: rgba(255, 216, 64, 0.18);
   padding: var(--space-lg);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255, 184, 0, 0.3);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -548,7 +668,7 @@ body {
 .voice-section {
   margin: var(--space-xl) 0;
   padding: var(--space-lg);
-  background: var(--background);
+  background: #FFF8D9;
   border-radius: var(--radius-md);
   border-left: 3px solid var(--primary);
 }
