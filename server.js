@@ -73,6 +73,20 @@ app.get('/api/geocode', async (req, res) => {
   } catch (e) { res.status(500).json({ error: 'Geocoding failed' }); }
 });
 
+// ── Location search (proxied through server to avoid CORS) ───────────────────
+app.get('/api/search', async (req, res) => {
+  const { q } = req.query;
+  if (!q) return res.status(400).json({ error: 'q required' });
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1&countrycodes=in`,
+      { headers: { 'User-Agent': 'DoorPilot/1.0 (doorpilot@example.com)', 'Accept-Language': 'en' } }
+    );
+    const d = await r.json();
+    res.json(d);
+  } catch (e) { res.status(500).json({ error: 'Search failed' }); }
+});
+
 app.get('/api/reverse-geocode', async (req, res) => {
   const { lat, lng } = req.query;
   if (!lat || !lng) return res.status(400).json({ error: 'lat and lng required' });

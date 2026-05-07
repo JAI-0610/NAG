@@ -1035,10 +1035,7 @@ class DoorPilotApp {
       searchResults.style.display = 'none';
       searchResults.innerHTML = '';
       try {
-        const r = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1&countrycodes=in`,
-          { headers: { 'Accept-Language': 'en', 'User-Agent': 'DoorPilot/1.0' } }
-        );
+        const r = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
         const results = await r.json();
         if (!results.length) {
           searchResults.innerHTML = '<div style="padding:12px 16px;color:#888;font-size:13px;">No results found</div>';
