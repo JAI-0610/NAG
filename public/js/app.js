@@ -769,113 +769,230 @@ class DoorPilotApp {
   }
   // ==================== LOCATION MODAL ====================
   _openLocationModal() {
-    // Remove any existing modal
     const existing = document.getElementById('location-modal');
     if (existing) existing.remove();
 
-    // Build modal
     const modal = document.createElement('div');
     modal.id = 'location-modal';
     modal.style.cssText = `
       position:fixed;inset:0;z-index:10000;
-      background:rgba(0,0,0,0.55);
+      background:rgba(10,22,40,0.7);
       display:flex;align-items:flex-end;justify-content:center;
-      animation:fadeIn 0.2s ease;
     `;
 
     modal.innerHTML = `
-      <div style="
+      <div id="loc-sheet" style="
         width:100%;max-width:600px;
         background:#fff;border-radius:24px 24px 0 0;
-        overflow:hidden;box-shadow:0 -4px 32px rgba(0,0,0,0.2);
-        animation:slideInFromBottom 0.3s ease-out;
+        overflow:hidden;
+        box-shadow:0 -8px 40px rgba(0,0,0,0.3);
+        transform:translateY(100%);
+        transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
       ">
-        <div style="background:#FFB800;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-weight:700;font-size:16px;">📍 Your Current Location</span>
-          <button id="close-loc-modal" style="background:none;border:none;font-size:22px;cursor:pointer;line-height:1;">✕</button>
+        <!-- Header -->
+        <div style="background:#FFB800;padding:14px 18px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">📍</span>
+          <span style="font-weight:700;font-size:16px;flex:1;">Your Exact Location</span>
+          <button id="close-loc-modal" style="background:rgba(0,0,0,0.12);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
         </div>
-        <div id="loc-modal-map" style="height:300px;width:100%;"></div>
-        <div style="padding:14px 20px 8px;">
-          <div id="loc-modal-address" style="
-            font-size:14px;color:#444;background:#fff8e1;
-            border:1px solid #FFB800;border-radius:10px;
-            padding:10px 14px;margin-bottom:12px;min-height:42px;
-          ">📡 Detecting your location…</div>
-          <div style="display:flex;gap:10px;padding-bottom:16px;">
-            <button id="loc-modal-navigate" style="
-              flex:1;padding:13px;border:none;border-radius:40px;
-              background:#FFB800;color:#1e1e1e;font-weight:700;font-size:15px;cursor:pointer;
-            ">🗺️ Open in Maps</button>
-            <button id="loc-modal-share" style="
-              flex:1;padding:13px;border:none;border-radius:40px;
-              background:#0A2647;color:#fff;font-weight:700;font-size:15px;cursor:pointer;
-            ">🔗 Share Location</button>
+
+        <!-- Map -->
+        <div style="position:relative;">
+          <div id="loc-modal-map" style="height:280px;width:100%;background:#e8e0d8;"></div>
+          <!-- Loading overlay -->
+          <div id="loc-map-loading" style="
+            position:absolute;inset:0;background:rgba(255,248,225,0.92);
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+            font-size:14px;color:#555;
+          ">
+            <div style="width:36px;height:36px;border:3px solid #FFB800;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+            <span>Getting your exact location…</span>
+            <span style="font-size:12px;color:#888;">Allow location access if prompted</span>
           </div>
+          <!-- Recenter button -->
+          <button id="loc-recenter" style="
+            position:absolute;bottom:12px;right:12px;
+            width:40px;height:40px;border:none;border-radius:50%;
+            background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.25);
+            font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+          ">🎯</button>
+        </div>
+
+        <!-- Address card -->
+        <div style="padding:14px 18px 0;">
+          <div id="loc-place-name" style="font-weight:700;font-size:15px;color:#1e1e1e;margin-bottom:4px;">Locating…</div>
+          <div id="loc-modal-address" style="font-size:13px;color:#666;line-height:1.5;margin-bottom:12px;min-height:18px;"></div>
+          <div id="loc-coords" style="font-size:11px;color:#aaa;margin-bottom:14px;font-family:monospace;"></div>
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:10px;padding:0 18px 20px;">
+          <button id="loc-modal-navigate" style="
+            flex:1;padding:13px 8px;border:none;border-radius:40px;
+            background:#FFB800;color:#1e1e1e;font-weight:700;font-size:14px;cursor:pointer;
+          ">🗺️ Navigate Here</button>
+          <button id="loc-modal-share" style="
+            flex:1;padding:13px 8px;border:none;border-radius:40px;
+            background:#0A2647;color:#fff;font-weight:700;font-size:14px;cursor:pointer;
+          ">🔗 Share Location</button>
         </div>
       </div>
     `;
 
     document.body.appendChild(modal);
 
-    // Close on backdrop click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.remove();
+    // Slide up
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById('loc-sheet').style.transform = 'translateY(0)';
+      });
     });
-    document.getElementById('close-loc-modal').addEventListener('click', () => modal.remove());
 
-    // Init mini map inside modal
-    let modalLat = null, modalLng = null;
+    const closeModal = () => {
+      document.getElementById('loc-sheet').style.transform = 'translateY(100%)';
+      setTimeout(() => modal.remove(), 350);
+    };
 
-    const miniMap = L.map('loc-modal-map', { zoomControl: true }).setView([20.5937, 78.9629], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap',
-      maxZoom: 19
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.getElementById('close-loc-modal').addEventListener('click', closeModal);
+
+    let modalLat = null, modalLng = null, miniMap = null, myMarker = null, myCircle = null;
+
+    // Init map immediately at a sensible default, then fly to GPS
+    miniMap = L.map('loc-modal-map', { zoomControl: false, attributionControl: false })
+               .setView([20.5937, 78.9629], 5);
+
+    // Use CartoDB Voyager — clean, detailed street map (same style as the reference image)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd'
     }).addTo(miniMap);
 
-    setTimeout(() => miniMap.invalidateSize(), 200);
+    // Zoom controls top-right
+    L.control.zoom({ position: 'topright' }).addTo(miniMap);
 
-    // Get GPS
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          modalLat = pos.coords.latitude;
-          modalLng = pos.coords.longitude;
+    setTimeout(() => miniMap.invalidateSize(), 100);
 
-          // Pin on mini map
-          const icon = L.divIcon({
-            className: '',
-            html: `<div style="width:20px;height:20px;background:#FFB800;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 4px rgba(255,184,0,0.35);"></div>`,
-            iconSize: [20, 20], iconAnchor: [10, 10]
-          });
-          L.marker([modalLat, modalLng], { icon }).addTo(miniMap);
-          L.circle([modalLat, modalLng], {
-            radius: pos.coords.accuracy,
-            color: '#FFB800', fillColor: '#FFD440', fillOpacity: 0.15, weight: 1
-          }).addTo(miniMap);
-          miniMap.flyTo([modalLat, modalLng], 17, { animate: true, duration: 1 });
+    // Recenter button
+    document.getElementById('loc-recenter').addEventListener('click', () => {
+      if (modalLat) miniMap.flyTo([modalLat, modalLng], 18, { animate: true, duration: 0.8 });
+    });
 
-          // Reverse geocode via our backend (Nominatim)
-          try {
-            const res  = await fetch(`/api/reverse-geocode?lat=${modalLat}&lng=${modalLng}`);
-            const data = await res.json();
-            document.getElementById('loc-modal-address').textContent =
-              data.success ? `📍 ${data.address}` : `${modalLat.toFixed(5)}, ${modalLng.toFixed(5)}`;
-          } catch {
-            document.getElementById('loc-modal-address').textContent =
-              `${modalLat.toFixed(5)}, ${modalLng.toFixed(5)}`;
-          }
-        },
-        (err) => {
-          const msgs = { 1: 'Permission denied — allow location in browser settings.', 2: 'Location unavailable.', 3: 'Timed out.' };
-          document.getElementById('loc-modal-address').textContent = msgs[err.code] || 'Could not get location';
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    } else {
-      document.getElementById('loc-modal-address').textContent = 'Geolocation not supported';
+    // GPS — high accuracy
+    if (!navigator.geolocation) {
+      document.getElementById('loc-place-name').textContent = 'Geolocation not supported';
+      document.getElementById('loc-map-loading').style.display = 'none';
+      return;
     }
 
-    // Open in Maps button
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        modalLat = pos.coords.latitude;
+        modalLng = pos.coords.longitude;
+        const acc = pos.coords.accuracy;
+
+        // Hide loading overlay
+        document.getElementById('loc-map-loading').style.display = 'none';
+
+        // Show coords immediately
+        document.getElementById('loc-coords').textContent =
+          `${modalLat.toFixed(6)}, ${modalLng.toFixed(6)}  ±${Math.round(acc)}m`;
+
+        // Pulsing "you are here" dot
+        const youIcon = L.divIcon({
+          className: '',
+          html: `
+            <div style="position:relative;width:22px;height:22px;">
+              <div style="
+                position:absolute;inset:0;border-radius:50%;
+                background:rgba(66,133,244,0.25);
+                animation:markerPulse 2s infinite;
+              "></div>
+              <div style="
+                position:absolute;top:50%;left:50%;
+                transform:translate(-50%,-50%);
+                width:14px;height:14px;border-radius:50%;
+                background:#4285F4;border:2.5px solid #fff;
+                box-shadow:0 2px 6px rgba(66,133,244,0.6);
+              "></div>
+            </div>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11]
+        });
+
+        myMarker = L.marker([modalLat, modalLng], { icon: youIcon }).addTo(miniMap);
+
+        // Accuracy circle
+        myCircle = L.circle([modalLat, modalLng], {
+          radius: acc,
+          color: '#4285F4',
+          fillColor: '#4285F4',
+          fillOpacity: 0.08,
+          weight: 1.5
+        }).addTo(miniMap);
+
+        // Fly to exact location at street level
+        miniMap.flyTo([modalLat, modalLng], 18, { animate: true, duration: 1.2 });
+
+        // Reverse geocode — get place name + full address
+        document.getElementById('loc-place-name').textContent = 'Fetching address…';
+        try {
+          // Use Nominatim directly for richer place data
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${modalLat}&lon=${modalLng}&format=json&zoom=18&addressdetails=1`,
+            { headers: { 'Accept-Language': 'en', 'User-Agent': 'DoorPilot/1.0' } }
+          );
+          const geo = await res.json();
+
+          if (geo && geo.display_name) {
+            const addr = geo.address || {};
+            // Build a human-friendly place name
+            const placeName =
+              addr.amenity || addr.building || addr.college || addr.university ||
+              addr.school || addr.hospital || addr.mall || addr.shop ||
+              addr.road || addr.neighbourhood || addr.suburb || 'Your Location';
+
+            const shortAddr = [
+              addr.road || addr.pedestrian,
+              addr.neighbourhood || addr.suburb,
+              addr.city || addr.town || addr.village,
+              addr.state
+            ].filter(Boolean).join(', ');
+
+            document.getElementById('loc-place-name').textContent = placeName;
+            document.getElementById('loc-modal-address').textContent = shortAddr || geo.display_name;
+
+            // Add a label popup on the marker
+            myMarker.bindPopup(`<b>${placeName}</b><br><small>${shortAddr}</small>`, {
+              offset: [0, -12], closeButton: false
+            }).openPopup();
+          }
+        } catch {
+          // Fallback to our backend
+          try {
+            const res2 = await fetch(`/api/reverse-geocode?lat=${modalLat}&lng=${modalLng}`);
+            const d2   = await res2.json();
+            if (d2.success) {
+              document.getElementById('loc-place-name').textContent = 'Your Location';
+              document.getElementById('loc-modal-address').textContent = d2.address;
+            }
+          } catch { /* silent */ }
+        }
+      },
+      (err) => {
+        document.getElementById('loc-map-loading').style.display = 'none';
+        const msgs = {
+          1: 'Location permission denied.\nPlease allow location in browser settings.',
+          2: 'Location signal unavailable. Try moving to an open area.',
+          3: 'Location request timed out. Try again.'
+        };
+        document.getElementById('loc-place-name').textContent = '⚠️ Location Error';
+        document.getElementById('loc-modal-address').textContent = msgs[err.code] || 'Could not get location';
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+
+    // Navigate button
     document.getElementById('loc-modal-navigate').addEventListener('click', () => {
       if (!modalLat) return;
       const isIOS     = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -887,32 +1004,28 @@ class DoorPilotApp {
       window.open(url, '_blank');
     });
 
-    // Share Location button
+    // Share button
     document.getElementById('loc-modal-share').addEventListener('click', async () => {
       if (!modalLat) return;
       const shareUrl = `https://www.google.com/maps?q=${modalLat},${modalLng}`;
-      const addrEl   = document.getElementById('loc-modal-address');
-      const address  = addrEl ? addrEl.textContent.replace('📍 ', '') : '';
+      const place    = document.getElementById('loc-place-name').textContent;
+      const addr     = document.getElementById('loc-modal-address').textContent;
 
       if (navigator.share) {
         try {
-          await navigator.share({
-            title: 'My Location — DoorPilot',
-            text: address || `${modalLat.toFixed(5)}, ${modalLng.toFixed(5)}`,
-            url: shareUrl
-          });
-        } catch { /* user cancelled */ }
+          await navigator.share({ title: place, text: addr, url: shareUrl });
+        } catch { /* cancelled */ }
       } else {
-        // Fallback: copy to clipboard
         try {
           await navigator.clipboard.writeText(shareUrl);
-          this.showNotification('📋 Location link copied to clipboard!');
+          this.showNotification('📋 Location link copied!');
         } catch {
-          this.showNotification('📍 ' + shareUrl);
+          this.showNotification(shareUrl);
         }
       }
     });
   }
+
 }
 
 // Initialize app when DOM is ready
