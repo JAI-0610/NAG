@@ -26,8 +26,8 @@ function getLanIP() {
   return 'localhost';
 }
 const LAN_IP = getLanIP();
-// Always use LAN IP so Find Me links work on other devices
-process.env.BASE_URL = `http://${LAN_IP}:${PORT}`;
+// Always use LAN IP if a BASE_URL isn't provided in .env
+process.env.BASE_URL = process.env.BASE_URL || `http://${LAN_IP}:${PORT}`;
 
 // ── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors());

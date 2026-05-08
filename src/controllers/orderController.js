@@ -138,7 +138,11 @@ exports.getOrderByToken = (req, res) => {
 // Assigns a delivery executive, generates Find Me link, sends SMS
 exports.assignDeliveryExecutive = async (req, res) => {
   try {
-    const { orderId, deliveryExecutivePhone, deliveryExecutiveId } = req.body;
+    let { orderId, deliveryExecutivePhone, deliveryExecutiveId } = req.body;
+
+    if (process.env.DELIVERY_PHONE) {
+      deliveryExecutivePhone = process.env.DELIVERY_PHONE;
+    }
 
     const order = ordersDb.findById(orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
